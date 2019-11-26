@@ -43,6 +43,7 @@
                             <td>Limite</td>
                             <td>Fator Conversão</td>
                             <td>Quantidade de Pontos</td>
+                            <td>Pessoa</td>
                             <td></td>
                         </tr>
                     </thead>
@@ -56,8 +57,11 @@
                                     ${obj.id}
                                 </c:if>
                             </td>                                    
-                            <td>${obj.nome}</td>
-                            <td>${obj.estado}</td>
+                            <td>${obj.vencimento}</td>
+                            <td>${obj.limite}</td>
+                            <td>${obj.fatorConversao}</td>
+                            <td>${obj.qtdPontos}</td>
+                            <td>${obj.pessoa}</td>
                             <td> <td>
                                 <c:if test="${permissao.getExcluir()}">
                                     <a href="#" id="remove" 
