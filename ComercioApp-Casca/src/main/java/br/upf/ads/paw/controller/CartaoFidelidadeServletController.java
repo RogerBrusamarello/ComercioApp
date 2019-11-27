@@ -2,9 +2,11 @@ package br.upf.ads.paw.controller;
 
 import br.upf.ads.paw.controladores.GenericDao;
 import br.upf.ads.paw.entidades.CartaoFidelidade;
+import br.upf.ads.paw.entidades.Movimento;
 import br.upf.ads.paw.entidades.Permissao;
 import br.upf.ads.paw.entidades.Pessoa;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,7 +89,7 @@ public class CartaoFidelidadeServletController extends HttpServlet {
             Logger.getLogger(CartaoFidelidadeServletController.class.getName()).log(Level.SEVERE, null, ex);
         }
         req.setAttribute("obj", obj);
-        req.setAttribute("listPessoa", daoPessoa.findEntities());
+        req.setAttribute("listCliente", daoPessoa.findEntities());
         req.setAttribute("action", "edit");
         String nextJSP = "/jsp/form-cartaoFidelidade.jsp";
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
@@ -145,7 +147,7 @@ public class CartaoFidelidadeServletController extends HttpServlet {
             throws ServletException, IOException {
         String nextJSP = "/jsp/form-cartaoFidelidade.jsp";
         List<Pessoa> list = daoPessoa.findEntities();
-        req.setAttribute("listPessoa", list);
+        req.setAttribute("listCliente", list);
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
         dispatcher.forward(req, resp);
     }
@@ -158,9 +160,11 @@ public class CartaoFidelidadeServletController extends HttpServlet {
             double limite = Double.parseDouble(req.getParameter("limite"));
             double fatorConversao = Double.parseDouble(req.getParameter("fatorConversao"));
             double qtdPontos = Double.parseDouble(req.getParameter("qtdPontos"));
-            long idPessoa = Long.parseLong(req.getParameter("pessoa"));
+            int senha = Integer.parseInt(req.getParameter("senha"));
+            long idPessoa = Long.parseLong(req.getParameter("cliente"));
+            ArrayList <Movimento> movimento = null;
 
-            CartaoFidelidade obj = new CartaoFidelidade(null, vencimento, limite, qtdPontos, fatorConversao, vencimento, daoPessoa.findEntity(idPessoa), null);
+            CartaoFidelidade obj = new CartaoFidelidade(null, vencimento, limite, qtdPontos, fatorConversao, senha, daoPessoa.findEntity(idPessoa), movimento);
 
             daoCartao.create(obj);
             long id = obj.getId();
@@ -180,9 +184,11 @@ public class CartaoFidelidadeServletController extends HttpServlet {
         double limite = Double.parseDouble(req.getParameter("limite"));
         double fatorConversao = Double.parseDouble(req.getParameter("fatorConversao"));
         double qtdPontos = Double.parseDouble(req.getParameter("qtdPontos"));
-        long idPessoa = Long.parseLong(req.getParameter("pessoa"));
+        int senha = Integer.parseInt(req.getParameter("senha"));
+        long idPessoa = Long.parseLong(req.getParameter("cliente"));
+            ArrayList <Movimento> movimento = null;
 
-        CartaoFidelidade obj = new CartaoFidelidade(id, vencimento, limite, qtdPontos, fatorConversao, vencimento, daoPessoa.findEntity(idPessoa), null);
+        CartaoFidelidade obj = new CartaoFidelidade(id, vencimento, limite, qtdPontos, fatorConversao, senha, daoPessoa.findEntity(idPessoa), movimento);
         boolean success = false;
         try {
             daoCartao.edit(obj);
@@ -199,17 +205,17 @@ public class CartaoFidelidadeServletController extends HttpServlet {
         doGet(req, resp);
     }
 
-    private void removeById(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    private void removeById(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long id = Integer.valueOf(req.getParameter("id"));
         boolean confirm = false;
         try {
             daoCartao.destroy(id);
             confirm = true;
         } catch (Exception ex) {
-            String message = "ERRO: Cidade sendo usada por outra entidade.";
+            String message = "ERRO: Cartão está sendo usado por outra entidade.";
             req.setAttribute("message", message);
             Logger.getLogger(CartaoFidelidadeServletController.class.getName()).log(Level.SEVERE, null, ex);
+            doGet(req, resp);
         }
         if (confirm) {
             String message = "O registro foi removido com sucesso.";
@@ -217,7 +223,6 @@ public class CartaoFidelidadeServletController extends HttpServlet {
         }
         doGet(req, resp);
     }
-
     /**
      * Returns a short description of the servlet.
      *

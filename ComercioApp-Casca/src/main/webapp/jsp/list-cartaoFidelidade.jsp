@@ -2,9 +2,9 @@
 <%@include file="../header.jspf" %>
 <div class="container">
     <h2>Cartão Fidelidade</h2>
-    
+
     <!--Search Form -->
-    <form action="/cartaoFidelidade" method="get" id="searchCidade" role="form">
+    <form action="/cartaoFidelidade" method="get" id="searchCartaoFidelidade" role="form">
         <input type="hidden" id="action" name="action" value="search">
         <div class="form-group col-xs-5">
             <input type="text" name="search" id="search" class="form-control" required="true" placeholder="Digite a descrição da cartaoFidelidade a procurar"/>                    
@@ -35,49 +35,51 @@
         <input type="hidden" id="action" name="action">
         <c:choose>
             <c:when test="${not empty entities}">
-                <table  class="table-striped table-xl col-xs-10">
+                <table class="table table-sm table-dark">
                     <thead>
                         <tr>
-                            <td>#</td>
-                            <td>Vencimento</td>
-                            <td>Limite</td>
-                            <td>Fator Conversão</td>
-                            <td>Quantidade de Pontos</td>
-                            <td>Pessoa</td>
-                            <td></td>
+                            <th scope="col">#</th>
+                            <th scope="col">Vencimento</th>
+                            <th scope="col">Limite</th>
+                            <th scope="col">Fator Conversão</th>
+                            <th scope="col">Quantidade de Pontos</th>
+                            <th scope="col">Pessoa</th>
+                            <th scope="col">#EXCLUIR</th>
                         </tr>
                     </thead>
-                    <c:forEach var="obj" items="${entities}">
-                        <tr class="${id == obj.id?"info":""}">
-                            <td>
-                                <c:if test="${permissao.getAlterar()}">
-                                    <a href="/cartaoFidelidade?id=${obj.id}&search=searchById">${obj.id}</a>
-                                </c:if>
-                                <c:if test="${!permissao.getAlterar()}">
-                                    ${obj.id}
-                                </c:if>
-                            </td>                                    
-                            <td>${obj.vencimento}</td>
-                            <td>${obj.limite}</td>
-                            <td>${obj.fatorConversao}</td>
-                            <td>${obj.qtdPontos}</td>
-                            <td>${obj.pessoa}</td>
-                            <td> <td>
-                                <c:if test="${permissao.getExcluir()}">
-                                    <a href="#" id="remove" 
-                                       onclick="document.getElementById('action').value = 'remove';document.getElementById('id').value = '${obj.id}';
-                                               document.getElementById('cartaoFidelidadeForm').submit();"> 
-                                        <span class="glyphicon glyphicon-trash"/>
-                                    </a>
-                                </c:if>
-                            </td>
-                        </tr>
-                    </c:forEach>               
+                    <tbody>
+                        <c:forEach var="obj" items="${entities}">
+                            <tr class="${id == obj.id?"row":""}">
+                                <th scope="row">
+                                    <c:if test="${permissao.getAlterar()}">
+                                        <a href="/cartaoFidelidade?id=${obj.id}&search=searchById">${obj.id}</a>
+                                    </c:if>
+                                    <c:if test="${!permissao.getAlterar()}">
+                                        ${obj.id}
+                                    </c:if>
+                                </th>                                   
+                                <td>${obj.vencimento}</td>
+                                <td>${obj.limite}</td>
+                                <td>${obj.fatorConversao}</td>
+                                <td>${obj.qtdPontos}</td>
+                                <td>${obj.cliente}</td>
+                                <td>
+                                    <c:if test="${permissao.getExcluir()}">
+                                        <a href="#" id="remove" 
+                                           onclick="document.getElementById('action').value = 'remove';document.getElementById('id').value = '${obj.id}';
+                                                   document.getElementById('cartaoFidelidadeForm').submit();"> 
+                                            <span class="glyphicon glyphicon-trash"/>
+                                        </a>
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
                 </table>  
             </c:when>                    
             <c:otherwise>
                 <br>           
-                <div class="alert alert-info">
+                <div class="alert alert-warning">
                     Nenhum registro encontrado.
                 </div>
             </c:otherwise>
